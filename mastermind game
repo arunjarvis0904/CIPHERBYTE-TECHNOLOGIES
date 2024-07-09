@@ -1,0 +1,45 @@
+def get_valid_number(prompt):
+    while True:
+        num = input(prompt)
+        if num.isdigit() and len(num) > 0:
+            return num
+        print("Please enter a valid multi-digit number.")
+
+def get_valid_guess(length):
+    while True:
+        guess = input(f"Enter your guess ({length} digits): ")
+        if guess.isdigit() and len(guess) == length:
+            return guess
+        print(f"Please enter a valid {length}-digit number.")
+
+def give_hints(secret, guess):
+    correct_positions = sum(1 for s, g in zip(secret, guess) if s == g)
+    correct_digits = sum(min(secret.count(d), guess.count(d)) for d in set(guess)) - correct_positions
+    return correct_positions, correct_digits
+
+def play_round(player_number, secret_setter, guesser):
+    print(f"\nPlayer {secret_setter}, set a multi-digit number for Player {guesser} to guess.")
+    secret = get_valid_number("Enter the secret number: ")
+    attempts = 0
+
+    while True:
+        guess = get_valid_guess(len(secret))
+        attempts += 1
+        if guess == secret:
+            print(f"Correct! Player {guesser} guessed the number in {attempts} attempts.")
+            return attempts
+        correct_positions, correct_digits = give_hints(secret, guess)
+        print(f"Player {guesser}, your guess {guess} has {correct_positions} digits in the correct position and {correct_digits} correct digits in the wrong position.")
+
+def main():
+    print("Welcome to the Mastermind game!")
+    attempts_player_1 = play_round(1, 1, 2)
+    attempts_player_2 = play_round(2, 2, 1)
+
+    if attempts_player_1 < attempts_player_2:
+        print("\nPlayer 1 wins and is crowned Mastermind!")
+    else:
+        print("\nPlayer 2 wins and is crowned Mastermind!")
+
+if __name__ == "__main__":
+    main()
